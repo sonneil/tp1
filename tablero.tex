@@ -23,8 +23,8 @@
  % Para que el PDF se abra a página completa.
  pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
  pdfauthor={Cátedra de Algoritmos y Estructuras de Datos II - DC - UBA},
- pdfkeywords={TADs básicos},
- pdfsubject={Tipos abstractos de datos básicos}
+ pdfkeywords={Tp 1},
+ pdfsubject={Especificacion de TADs}
 }
 
 \parskip=5pt % 10pt es el tamaño de fuente
@@ -38,13 +38,13 @@
 \thispagestyle{fancy}
 \addtolength{\headheight}{1pt}
 \lhead{Algoritmos y Estructuras de Datos II}
-\rhead{$1^{\mathrm{er}}$ cuatrimestre de 2012}
+\rhead{$1^{\mathrm{er}}$ cuatrimestre de 2017}
 \cfoot{\thepage /\pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
 
 \author{Algoritmos y Estructuras de Datos II, DC, UBA.}
 \date{}
-\title{Tipos abstractos de datos básicos}
+\title{Tp 1}
 
 \begin{document}
 
@@ -63,9 +63,9 @@
 
 \begin{tad}{\tadNombre{Tablero}}
 \tadGeneros{tab}
-\tadExporta{despues vemos}
+\tadExporta{tab, observadores, casilleros, tableroValido?}
 
-\tadIgualdadObservacionalSimple{ya veremos}
+\tadIgualdadObservacionalSimple{(\paratodo{tab}{t1,t2}) (continentes(t1)= continentes(t2) \land movimientos(t1)= movimientos(t2))}
 \tadObservadores
 
 \tadOperacion{continentes}{tab}{conj(Continente)}{}
@@ -73,55 +73,78 @@
 
 \tadGeneradores
 \tadOperacion{tableroVacío}{}{tab}{}
-\tadOperacion{agregarContinente}{Continente /c, tab /t}{tab}{}
-\tadOperacion{agregarCasillero}{Casillero /p, Continente /c,tab /t}{tab}{$c \in continentes(t)$}
-\tadOperacion{agregarMovimiento}{Casillero /p, Movimiento /m, Casillero /q, tab /t}{tab}{$p \in paises(t) \land q \in paises(t) \land p\neq q$}
+\tadOperacion{agregarContinente}{Continente /c, tab /t}{tab}{c \cap casilleros(t) = \emptyset}
+\tadOperacion{agregarMovimiento}{Casillero /p, Movimiento /m, Casillero /q, tab /t}{tab}{p \in casilleros(t) \land q \in casilleros(t) \land p\neq q \land \neg m \in movimientosDesde(p,t) }
 \tadOtrasOperaciones
-
-
-\tadOperacion{continentesConexos}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
+\begin{framed}
+    \begin{itemize}
+        \item continentesConexos: verifica sí se cumple la condición "`Agrupamiento de Continentes"'.
+				\item movimientosDede: se usa en el generador agregarMovimiento para garantizar la Unicidad de Movimientos.
+    \end{itemize}
+\end{framed}
 
 \tadOperacion{casilleros}{tab}{conj(casilleros)}{}
-\tadOperacion{esConexo?}{tab}{bool}{}
-\tadOperacion{continentesConexos}{tab}{bool}{}
+\tadOperacion{conexo?}{tab}{bool}{}
+\tadOperacion{continentesConexos?}{tab}{bool}{}
+\tadOperacion{movimientosDesde}{Casillero,tab}{conj(Movimiento)}{}
+\tadOperacion{simetria?}{tab}{bool}{}
+\tadOperacion{tableroValido?}{tab}{bool}{}
 
-\tadOperacion{estanConectados}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
-\tadOperacion{todosConLosQueSeConecta}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
-\tadOperacion{conectadosDeConectadosA}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
-
+\begin{framed}
+    \begin{itemize}
+        \item Estas operaciones solo se usan como auxiliares para la axiomatiación de las pimeras seis.
+				\item estánConectados: dado dos conjuntos de casilleros, es true sí todo elemento del primero esta conectado con todos los del segundo.
+				\item todosALosQuePuedoLlegarDesde: dado un casillero "`p"' es el conjunto de casilleros "`q"'  tal que se puede llegar de p a q. 
+				\item conectadosA: son todos con los que el casillero se puede conectar a treves de un solo movimiento.
+				\item conectadosDeConectadosA: dado un conj de casilleros, es la union  de "`aplicar"' conectadosA a cada elemento del conjunto.
+    \end{itemize}
+\end{framed}
 
 \tadOperacion{unirContinentes}{conj(Continente)}{conj(Casillero)}{}
-\tadOperacion{estánConectados}{conj(Casillero) \ ps, conj(Casillero) \ qs,tad \ t}{bool}{$ps \subseteq casilleros(t) \land qs \subseteq casilleros(t)$}
-\tadOperacion{todosConLosQueSeConecta}{Casillero \ p,tad \ t}{conj(Casillero)}{$p \in casilleros(t)$}
-\tadOperacion{conectadosA}{Casillero, tad}{conj(Casillero)}{}
-\tadOperacion{conectadosDeConectadosA}{conj(Casillero), tad}{conj(Casillero)}{}
+\tadOperacion{estánConectados}{conj(Casillero) \ ps, conj(Casillero) \ qs,tab \ t}{bool}{ps \subseteq casilleros(t) \land qs \subseteq casilleros(t)}
+\tadOperacion{todosALosQuePuedoLlegarDesde}{Casillero \ p,tab \ t}{conj(Casillero)}{p \in casilleros(t)}
+\tadOperacion{todosALosQuePuedoLlegarDesdeAux}{conj(Casillero) \ ps,tab \ t}{conj(Casillero)}{ps \subseteq casilleros(t)}
+\tadOperacion{conectadosA}{Casillero, tab}{conj(Casillero)}{}
+\tadOperacion{conectadosDeConectadosA}{conj(Casillero), tab}{conj(Casillero)}{}
+\tadOperacion{continentesConexos?Aux}{conj(Continente),tab}{bool}{}
+\tadOperacion{recortarTab}{Continente, tab}{tab}{}
+\tadOperacion{simetria?Aux}{conj(casillero), tab}{bool}{}
+\tadOperacion{simetria?Aux2}{casiillero,conj(casillero),tab}{bool}{}
 
 
-\tadAxiomas[]
+\tadAxiomas[\paratodo{Casillero}{p, q, r}, \paratodo{conj(Casillero)}{ps, qs}, \paratodo{Continente}{c}, \paratodo{conj(Continente)}{cs}, \paratodo{Movimiento}{m}, 
+\paratodo{tab}{t}]
 
 
-\tadAxioma{continentes(tableroVacío)}{$\emptyset$}
+\tadAxioma{continentes(tableroVacío)}{\emptyset}
 \tadAxioma{continentes(agregarContinentes(c,t))}{Ag(c,continentes(t))}
 \tadAxioma{continentes(agregarCasillero(p,c,t))}{continentes(t)}
 \tadAxioma{continentes(agregarMovimiento(p,m,q,t))}{continentes(t)}
-\tadAxioma{movimientos(tableroVacio)}{$\emptyset$}
+\tadAxioma{movimientos(tableroVacío)}{\emptyset}
 \tadAxioma{movimientos(argregarContinentes(c,t))}{movimientos(t)}
-\tadAxioma{movimientos(agregarCasillero(p,c,t))}{movimientos(t)}
 \tadAxioma{movimientos(agregarMovimientos(p,m,q,t))}{Ag(<p,m,q>,movimientos(t))}
 \tadAxioma{casilleros(t)}{unirContinentes(continentes(t))}
-\tadAxioma{esConexo?(t)}{estánConectados(casilleros(t),casilleros(t),t)}
-\tadAxioma{estánConectados(ps,qs,t)}{ \IF $vacia?(ps)$ THEN $true$ ELSE $todosConLosQueSeConecta(dameUno(ps),t) = qs - dameUno(ps) \land estanConectados(sinUno(ps),qs,t)$FI}
-\tadAxioma{todosConLosQueSeConecta(p,t)}{$todosConLosQueSeConectan(Ag(p, \emptyset),t)$}
-\tadAxioma{todosConLosQueSeConectan(ps,t)}{\IF $conectadosDeConectadosA(ps,t) \subseteq ps$ THEN $ps$ ELSE $todosConLosQueSeConectan(conectadosDeConectadosA(ps,c),t)$ FI}
+\tadAxioma{unirContinentes(cs)}{\IF $vacio?$ THEN $\emptyset$ ELSE $dameUno(cs) \cup unirContinentes(sinUno(cs))$ FI}
+\tadAxioma{conexo?(t)}{estánConectados(casilleros(t),casilleros(t),t)}
+\tadAxioma{estánConectados(ps,qs,t)}{ \IF $vacia?(ps)$ THEN $true$ ELSE $todosALosQuePuedoLlegarDesde(dameUno(ps),t) = qs \land estanConectados(sinUno(ps),qs,t)$FI}
+\tadAxioma{todosALosQuePuedoLlegarDesde(p,t)}{todosALosQuePuedoLlegarDesdeAux(Ag(p, \emptyset),t)}
+\tadAxioma{todosALosQuePuedoLlegarDesdeAux(ps,t)}{\IF $conectadosDeConectadosA(ps,t) \subseteq ps$ THEN $ps$ ELSE $todosALosQuePuedoLlegarDesdeAux(conectadosDeConectadosA(ps,c),t)$ FI}
 \tadAxioma{conectadosDeConectadosA(ps,t)}{\IF $vacia?(ps)$ THEN $\emptyset$ ELSE $conectadosA(dameUno(ps),c) \cup dameUno(ps) \cup conectadosDeConectadosA(sinUno(us),c)$ FI}
-\tadAxioma{conectadosA(p,tableroVacío)}{$\emptyset$}
+\tadAxioma{conectadosA(p,tableroVacío)}{\emptyset}
 \tadAxioma{conectadosA(p,agregarContinente(c,t)}{conectadosA(p,t)}
-\tadAxioma{conectadosA(p,agregarCasillero(q,c,t))}{conectadosA(p,t)}
 \tadAxioma{conectadosA(p,agregarMovimiento(q,m,r,t)}{\IF $p=q$ THEN $Ag(r,\emptyset) \cup conectadosA(p,t)$ ELSE $conectadosA(p,t)$ FI}
-\tadAxioma{}{}
-\tadAxioma{}{}
-\tadAxioma{}{}
-
+\tadAxioma{continentesConexos?(t)}{continentesConexos?Aux(continentes(t),t)}
+\tadAxioma{continentesConexos?Aux(cs,t)}{\IF $vacio?(cs)$ THEN $true$ ELSE $conexo?(recortarTad(dameUno(cs),t)) \land continentesConexos?(sinUno(cs),t)$ FI}
+\tadAxioma{recortarTab(c,tableroVacío)}{tableroVacío}
+\tadAxioma{recortarTab(c,agregarContinente(d,t))}{\IF $c=d$ THEN $agregarContinente(c,recortarTab(c,t))$ ELSE $recortarTab(c,t)$ FI}
+\tadAxioma{recortarTad(c,agregarMovimiento(q,m,r,t))}{\IF $p \in c \land q \in c$ THEN $agregarMovimiento(q,m,r,recortarTab(c,t))$ ELSE $recortarTab(c,t)$ FI}
+\tadAxioma{movimientosDesde(p,tableroVacío)}{\emptyset}
+\tadAxioma{movimientosDesde(p,agregarContinente(c,t))}{movimientosDesde(p,t)}
+\tadAxioma{movimientosDesde(p,agregarMovimiento(q,m,r,t))}{\IF $p = q$ THEN $Ag(m,movimientosDesde(p,t)$ ELSE $movimientosDesde(p,t)$ FI}
+\tadAxioma{simetria?(t)}{simetria?Aux(casilleros(t),t)}
+\tadAxioma{simetria?Aux(ps,t)}{\IF $vacio?(ps)$ THEN $true$ ELSE $ simetriaAux2(dameUno(ps),conectadosA(dameUno(ps),t),t) \land simetria?Aux(sinUno(ps),t)$ FI}
+\tadAxioma{simetria?Aux2(p,qs,t)}{\IF $vacio?(qs)$ THEN $true$ ELSE $ p \in conectadosA(dameUno(qs)) \land simetria?Aux2(p,sinUno(qs),t) $ FI}
+\tadAxioma{tableroValido?(t)}{conexo?(t) \land continentesConexos?(t) \land simetria?(t)}
 \end{tad}
 
 \end{document}
