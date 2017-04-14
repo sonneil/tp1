@@ -44,84 +44,151 @@
 
 \author{Algoritmos y Estructuras de Datos II, DC, UBA.}
 \date{}
-\title{Tipos abstractos de datos básicos}
+\title{Teg}
 
 \begin{document}
 
 
 
-%TADS
+%TADS	
 \section{Renombres de TADs}
 
-\tadNombre{TAD Casillero} es \tadNombre{String}
 
-\tadNombre{TAD Continente} es \tadNombre{conj(Casillero)}
+\section{TAD \tadNombre{Teg}}
 
-\tadNombre{TAD Jugador} es \tadNombre{String}
-
-\section{TAD \tadNombre{Tablero}}
-
-\begin{tad}{\tadNombre{Tablero}}
-\tadGeneros{tab}
+\begin{tad}{\tadNombre{Teg}}
+\tadGeneros{teg}
 \tadExporta{despues vemos}
 
 \tadIgualdadObservacionalSimple{ya veremos}
 \tadObservadores
 
-\tadOperacion{continentes}{tab}{conj(Continente)}{}
-\tadOperacion{movimientos}{tab}{conj(tupla(Casillero, Movimiento, Casillero))}{}
+\tadOperacion{jugadores}{teg}{conj(jugador)}{}
+\tadOperacion{\#fichasJEnC}{teg/t,jugador/j}{nat}{$j \in jugadores(teg)$}
+\tadOperacion{mision}{teg,jugador}{conj(casillero)}{$j \in jugadores(teg)$}
+\tadOperacion{finalizado}{teg}{bool}{}
+\tadOperacion{tablero}{teg}{tablero}{}
+\tadOperacion{\#fichasTotales}{teg/t,jugador/j}{nat}{$j \in jugadores(t)$}
 
 \tadGeneradores
-\tadOperacion{tableroVacío}{}{tab}{}
-\tadOperacion{agregarContinente}{Continente /c, tab /t}{tab}{}
-\tadOperacion{agregarCasillero}{Casillero /p, Continente /c,tab /t}{tab}{$c \in continentes(t)$}
-\tadOperacion{agregarMovimiento}{Casillero /p, Movimiento /m, Casillero /q, tab /t}{tab}{$p \in paises(t) \land q \in paises(t) \land p\neq q$}
+\tadOperacion{iniciar}{conj(jugador)/jugadores,conj(casillero)/posIniciales,conj(continente)/misiones,tablero/t}{teg}{$tableroValido(t)$ $\yluego$ \#$(jugadores)=$\#$(posIniciales)$ $\land$ \#$(posIniciales)=$\#$(misiones)$ $\land$ $misiones \subseteq continentes(t)$ $\land$ $posIniciales \subseteq casilleros(t)$}
+\tadOperacion{mover}{teg/t, jugador/j, movimiento/m, nat/k}{teg}{$j \in jugadores(t)$}
+\tadOperacion{agFicha}{teg/t, jugador/j, casillero/c}{teg}{$j \in jugadores(t)$ $\land$ $c \in casilleros(tablero(t))$}
 \tadOtrasOperaciones
 
 
-\tadOperacion{continentesConexos}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
+\tadOperacion{faltaDominar}{teg/t,jugador/j}{nat}{$j \in jugadores(t)$}
+\tadOperacion{eliminado}{teg/t,jugador/j}{bool}{$j \in jugadores(t)$}
+\tadOperacion{estadoCasillero}{teg/t,casillero/c}{EstadoCasillero}{$c \in casilleros(tablero(t))$}
+\tadOperacion{eliminados}{teg/t}{teg}{}
+\tadOperacion{ganador}{teg/t}{teg}{$finalizado(t)$}
+\tadOperacion{faltanDominar}{teg}{conj(casillero)}{}
+\tadOperacion{casillerosDisputados}{teg}{conj(casillero)}{}
+\tadOperacion{casillerosDominados}{teg}{conj(casillero)}{}
+\tadOperacion{casillerosVacios}{teg}{conj(casillero)}{}
+\tadOperacion{disputan}{teg/t,casillero/c}{conj(jugador)}{$disputado(t,c)$}
+%%%%%%%%%%%% OPERACIONES AUXILIARES AGREGAR UN COMENTARIO
+\tadOperacion{jugadoresEnC}{teg/t,casillero/c}{conj(jugador)}{$j \in jugadores(t)$}
+\tadOperacion{\#jugadoresEnC}{teg/t,casillero/c}{nat}{$j \in jugadores(t)$}
+\tadOperacion{chequearEliminado}{teg/t,jugador/j,conj(casillero)/cs}{nat}{$j \in jugadores(t)$}
+\tadOperacion{dominadosPorJ}{teg/t,jugador/j,conj(casillero)/cs}{conj(casillero)}{$j \in jugadores(t)$}
+\tadOperacion{obtenerGanadores}{teg/t,conj(jugador)/jugadores}{conj(jugador)}{}
+\tadOperacion{domina}{teg/t,jugador/j,casillero/c}{bool}{$j \in jugadores(t) \land c \in casilleros(tablero(t))$}
+\tadOperacion{obtenerCasillerosVacios}{teg/t,conj(casillero)/cs}{conj(casillero)}{}
+\tadOperacion{obtenerJugadoresEnC}{teg/t,casillero/c,conj(jugador)/js}{conj(jugador)}{$c \in casilleros(tablero(t))$}
+\tadOperacion{$\beta$}{bool}{nat}{}
+\tadOperacion{chequearFinalizado}{teg}{bool}{}
+\tadOperacion{destinosJ}{teg/t,movimiento/m,jugador/j}{conj(casillero)}{$j \in jugadores(t)$}
+\tadOperacion{iniciosJ}{teg/t,movimiento/m,jugador/j}{conj(casillero)}{$j \in jugadores(t)$}
 
-\tadOperacion{casilleros}{tab}{conj(casilleros)}{}
-\tadOperacion{esConexo?}{tab}{bool}{}
-\tadOperacion{continentesConexos}{tab}{bool}{}
+\tadOperacion{dameLosQueVanAC}{teg/t,movimiento/m,jugador/j,casillero/c,conj(casillero)/cs}{conj(casillero)}{$j \in jugadores(t)$}
 
-\tadOperacion{estanConectados}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
-\tadOperacion{todosConLosQueSeConecta}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
-\tadOperacion{conectadosDeConectadosA}{tab}{conj(casilleros)}{$verifica si se cumple la condicion "`Agrupamiento de Continentes"'$}				
+\tadOperacion{obtenerDestinosJ}{teg/t,movimiento/m,jugador/j,conj(casillero)/cs}{conj(casillero)}{$j \in jugadores(t)$}
+\tadOperacion{obtenerIniciosJ}{teg/t,movimiento/m,jugador/j,conj(casillero)/cs}{conj(casillero)}{$j \in jugadores(t)$}
+\tadOperacion{disputado}{teg/t,casillero/c}{conj(casillero)}{$c \in casilleros(tablero(t))$}
+\tadOperacion{disputadoPorJYElegido}{teg/t,jugador/j,casillero/c}{bool}{$j \in jugadores(t) \land c \in casilleros(tablero(t))$}
+\tadOperacion{jugadorElegido}{teg/t,casillero/c}{jugador}{$c \in casilleros(tablero(t)) \yluego \#(jugadoresEnC(t,c))>0$}
 
-
-\tadOperacion{unirContinentes}{conj(Continente)}{conj(Casillero)}{}
-\tadOperacion{estánConectados}{conj(Casillero) \ ps, conj(Casillero) \ qs,tad \ t}{bool}{$ps \subseteq casilleros(t) \land qs \subseteq casilleros(t)$}
-\tadOperacion{todosConLosQueSeConecta}{Casillero \ p,tad \ t}{conj(Casillero)}{$p \in casilleros(t)$}
-\tadOperacion{conectadosA}{Casillero, tad}{conj(Casillero)}{}
-\tadOperacion{conectadosDeConectadosA}{conj(Casillero), tad}{conj(Casillero)}{}
+\tadOperacion{unicoJugadorVivo?}{teg/t}{bool}{}
+\tadOperacion{unicoJugadorVivo}{teg/t}{jugador}{unicoJugadorVivo?(t)}
+\tadOperacion{jugadoresVivos}{teg/t,conj(jugador)/jugadores}{conj(jugador)}{}
+\tadOperacion{sumaFichasToC}{teg/t,jugador/j,movimiento/m,casillero/c,nat/k,conj(casillero)}{nat}{$j \in jugadores(t) \land c \in casilleros(tablero(t))$}
+\tadOperacion{obtenerFaltaDominar}{teg/t,jugador/j,}{nat}{$j \in jugadores(t)$}
 
 
 \tadAxiomas[]
 
+\tadAxioma{jugadores(iniciar(t,jugadores,posicionesIniciales,misiones)))}{jugadores}
+\tadAxioma{jugadores(mover(t,j,m)))}{jugadores(t)}
+\tadAxioma{jugadores(agFicha(t,j,c)))}{jugadores(t)}
+\tadAxioma{\#fichasJEnC(iniciar(t,jugadores,posicionesIniciales,misiones)),j,c)}{$\beta(c \in posicionesIniciales)$}
+\tadAxioma{\#fichasJEnC(mover(t,j,m,k),j1,c)}{
+\IF $j=j1$ THEN 
+	{\IF $c \in destinosJ(t,m,j1)$ THEN  
+		$\#fichasJEnC(t,j1,c)$+$sumaFichasToC(t,j1,m,c,k,dameLosQueVanAC(t,m,j1,c,casilleros(tablero(t))))$-$\beta(disputadoPorJYJugElegido(t,c,j1))$ 
+	ELSE 
+		{\IF $c \in iniciosJ(t,m,j1)$ THEN 
+			{\IF $\#fichasJEnC(t,j1,c) > k$ THEN 
+				$\#fichasJEnC(t,j1,c) - k - \beta(disputadoPorJYJElegido(t,c,j1))$
+			ELSE 
+				0 
+			FI}
+		ELSE
+			$\#fichasJEnC(t,j1,c) - \beta(disputadoPorJYJElegido(t,c,j1))$
+		FI}
+	FI} 
+ELSE 
+	$\#fichasJEnC(t,j1,c) - \beta(disputadoPorJYJElegido(t,c,j1))$
+FI}
+\tadAxioma{\#fichasJEnC(agFicha(t,j,c),j1,c1)}{\#fichasJEnC(t,j1,c1) + $\beta(c=c1 \land j=j1)$}
+\tadAxioma{finalizado(iniciar(t,jugadores,posIniciales,misiones))}{chequearFinalizado(t,jugadores,posIniciales,misiones)}
+\tadAxioma{finalizado(mover(t,j,m))}{chequearFinalizado(mover(t,j,m)}
+\tadAxioma{finalizado(agFicha(t,j,c))}{chequearFinalizado(agFicha(t,j,c)}
+\tadAxioma{\#fichasTotales(iniciar(t,jugadores,posIniciales,misiones))}{0}
+\tadAxioma{\#fichasTotales(mover(t,j,m),j1)}{\#fichasTotales(t,j1)}
+\tadAxioma{\#fichasTotales(agFicha(t,j,c),j1)}{\#fichasTotales(t,j1) + $\beta(j=j1)$}
+\tadAxioma{eliminado(t,j)}{chequearEliminado(t,j,casilleros(tablero(t)))}
+\tadAxioma{eliminados(t)}{obtenerEliminados(t,jugadores(t))}
+\tadAxioma{estadoCasillero(t,c)}{\IF $\#jugadoresEnC(t,c)=0$ THEN $VACIO$ ELSE {\IF $\#jugadoresEnC(t,c)=1$ THEN $DOMINADO$ ELSE $DISPUTADO$ FI} FI}
+\tadAxioma{ganador(t)}{dameUno(obtenerGanadores(t,jugadores(t)))}
+\tadAxioma{obtenerGanadores(t,jugadores)}{\IF $unicoJugadorVivo?(t)$ THEN $\{$ $obtenerUnicoJugadorVivo(t)$ $\}$ ELSE { \IF $\emptyset ?(jugadores)$ THEN $\emptyset$ ELSE {\IF $mision(t,dameUno(jugadores)) \subseteq \\ dominadosPorJ(t,dameUno(jugadores),casilleros(tablero(t)))$ THEN $Ag(dameUno(jugadores),obtenerGanadores(t,sinUno(jugadores)))$ ELSE $obtenerGanadores(t,sinUno(jugadores))$ FI} FI} FI}
 
-\tadAxioma{continentes(tableroVacío)}{$\emptyset$}
-\tadAxioma{continentes(agregarContinentes(c,t))}{Ag(c,continentes(t))}
-\tadAxioma{continentes(agregarCasillero(p,c,t))}{continentes(t)}
-\tadAxioma{continentes(agregarMovimiento(p,m,q,t))}{continentes(t)}
-\tadAxioma{movimientos(tableroVacio)}{$\emptyset$}
-\tadAxioma{movimientos(argregarContinentes(c,t))}{movimientos(t)}
-\tadAxioma{movimientos(agregarCasillero(p,c,t))}{movimientos(t)}
-\tadAxioma{movimientos(agregarMovimientos(p,m,q,t))}{Ag(<p,m,q>,movimientos(t))}
-\tadAxioma{casilleros(t)}{unirContinentes(continentes(t))}
-\tadAxioma{esConexo?(t)}{estánConectados(casilleros(t),casilleros(t),t)}
-\tadAxioma{estánConectados(ps,qs,t)}{ \IF $vacia?(ps)$ THEN $true$ ELSE $todosConLosQueSeConecta(dameUno(ps),t) = qs - dameUno(ps) \land estanConectados(sinUno(ps),qs,t)$FI}
-\tadAxioma{todosConLosQueSeConecta(p,t)}{$todosConLosQueSeConectan(Ag(p, \emptyset),t)$}
-\tadAxioma{todosConLosQueSeConectan(ps,t)}{\IF $conectadosDeConectadosA(ps,t) \subseteq ps$ THEN $ps$ ELSE $todosConLosQueSeConectan(conectadosDeConectadosA(ps,c),t)$ FI}
-\tadAxioma{conectadosDeConectadosA(ps,t)}{\IF $vacia?(ps)$ THEN $\emptyset$ ELSE $conectadosA(dameUno(ps),c) \cup dameUno(ps) \cup conectadosDeConectadosA(sinUno(us),c)$ FI}
-\tadAxioma{conectadosA(p,tableroVacío)}{\emptyset}
-\tadAxioma{conectadosA(p,agregarContinente(c,t)}{conectadosA(p,t)}
-\tadAxioma{conectadosA(p,agregarCasillero(q,c,t))}{conectadosA(p,t)}
-\tadAxioma{conectadosA(p,agregarMovimiento(q,m,r,t)}{\IF $p=q$ THEN $Ag(r,\emptyset) \cup conectadosA(p,t)$ ELSE $conectadosA(p,t)$ FI}
-\tadAxioma{}{}
-\tadAxioma{}{}
-\tadAxioma{}{}
+\tadAxioma{faltanDominar(t,j)}{$\#(mision(t,j) - (dominados(t,j) \cap mision(t,j)))$}
+\tadAxioma{casillerosDisputados(t)}{$faltanDominar(t) - casillerosVacios(t)$}
+\tadAxioma{casillerosVacios(t)}{$obtenerCasillerosVacios(t,casilleros(tablero(t)))$}
+\tadAxioma{disputan(t,c)}{$jugadoresEnC(t,c)$}
+
+%%%% AXIOMAS OP AUXILIARES
+\tadAxioma{chequearEliminado(t,j,cas)}{\IF $\emptyset ?(cas)$ THEN true ELSE {\IF $\#fichasJEnC(t,j,dameUno(cas))=0$ THEN chequearEliminado(t,j,sinUno(cas)) ELSE false FI} FI}
+\tadAxioma{obtenerEliminados(t,jugadores)}{\IF $\emptyset ?(jugadores)$ THEN {$\emptyset$} ELSE {\IF $eliminado(t,dameUno(jugadores))$ THEN $Ag(dameUno(jugadores),obtenerEliminados(t,sinUno(jugadores)))$ ELSE $obtenerEliminados(t,sinUno(jugadores))$ FI} FI}
+\tadAxioma{dominadosPorJ(t,j,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $estadoCasillero(t,j,dameUno(cs))=DOMINADO$ THEN $Ag(dameUno(cs),dominadosPorJ(t,j,sinUno(cs)))$ ELSE $dominadosPorJ(t,j,sinUno(cs))$ FI} FI}
+\tadAxioma{domina(t,j,c)}{$j \in jugadoresEnC(t,c) \land \#jugadoresEnC(t,c)=1$}
+\tadAxioma{obtenerCasillerosVacios(t,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $\#estadoCasillero(t,dameUno(cs))=VACIO$ THEN $Ag(dameUno(cs),obtenerCasillerosVacios(t,sinUno(cs)))$ ELSE $obtenerCasillerosVacios(t,sinUno(cs))$ FI} FI}
+\tadAxioma{jugadoresEnC(t,c)}{obtenerJugadoresEnC(t,c,jugadores(t))}
+\tadAxioma{obtenerJugadoresEnC(t,c,jugs)}{\IF $\emptyset ?(jugs)$ THEN $\emptyset$ ELSE {\IF $\#fichasJEnC(t,j,c) > 0$ THEN $Ag(dameUno(jugs),obtenerJugadoresEnC(t,c,sinUno(jugs)))$ ELSE $obtenerJugadoresEnC(t,c,sinUno(jugs))$ FI} FI}
+\tadAxioma{\#jugadoresEnC(t,c)}{\#(jugadoresEnC(t,c))}
+
+\tadAxioma{chequearFinalizado(t)}{$\#(obtenerGanadores(t,jugadores(t)))>0$}
+\tadAxioma{destinosJ(t,m,j)}{$obtenerDestinosJ(t,m,j,casilleros(tablero(t)))$}
+\tadAxioma{iniciosJ(t,m,j)}{$obtenerIniciosJ(t,m,j,casilleros(tablero(t)))$}
+
+\tadAxioma{dameLosQueVanAC(t,j,m,c,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $dameUno(cs)$$\in$$inicios(tablero(t),m)$ $\land$ $\\\#fichasJEnC(t,j,dameUno(cs))>0$$\land$$dameUno(cs)=c$ THEN $Ag(dameUno(cs),dameLosQueVanAC(t,j,m,c,sinUno(cs)))$ ELSE $dameLosQueVanAC(t,j,m,c,sinUno(cs))$ FI} FI}
+
+
+\tadAxioma{obtenerDestinosJ(t,m,j,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $dameUno(cs)$$\in$$destinos(tablero(t),m)$ $\land$ $\\\#fichasJEnC(t,j,dameUno(cs))>0$ THEN $Ag(dameUno(cs),obtenerDestinosJ(t,m,j,sinUno(cs)))$ ELSE $obtenerDestinosJ(t,m,j,sinUno(cs))$ FI} FI}
+
+\tadAxioma{obtenerIniciosJ(t,m,j,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $dameUno(cs)$$\in$$inicios(tablero(t),m)$ $\land$ $\\\#fichasJEnC(t,j,dameUno(cs))>0$ THEN $Ag(dameUno(cs),obtenerIniciosJ(t,m,j,sinUno(cs)))$ ELSE $obtenerIniciosJ(t,m,j,sinUno(cs))$ FI} FI}
+
+\tadAxioma{disputado(t,c)}{$\#jugadoresEnC(t,c)>1$}
+\tadAxioma{disputadoPorJYElegido(t,j,c)}{\IF $j\in jugadoresEnC(t,c)$ THEN $j = jugadorElegido(t,c)$ $\land$ $\#jugadoresEnC(t,c)>1$ ELSE false FI}
+\tadAxioma{jugadoElegido(t,c)}{$dameUno(jugadoresEnC(t,c))$}
+\tadAxioma{$\beta$(b)}{\IF $b$ THEN 1 ELSE 0 FI}
+
+\tadAxioma{unicoJugadorVivo?(t)}{\#(jugadoresVivos(t,jugadores(t)))=1}
+\tadAxioma{unicoJugadorVivo(t)}{dameUno(jugadoresVivos(t,jugadores(t)))}
+\tadAxioma{jugadoresVivos(t,jugs)}{jugadores(t) - eliminados(t)}
+
+\tadAxioma{sumaFichasToC(t,j,m,c,k,destinosC)}{\IF $\emptyset ?(destinosC)$ THEN 0 ELSE {\IF $\#fichasJEnC(t,j,dameUno(destinosC))<k $ THEN \#fichasJEnC(t,j,dameUno(destinosC))+\\sumaFichasToC(t,j,m,c,k,sinUno(destinosC)) ELSE k+sumaFichasToC(t,j,m,c,k,sinUno(destinosC)) FI} FI}
 
 \end{tad}
-
 \end{document}
