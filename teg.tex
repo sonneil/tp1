@@ -72,8 +72,8 @@
 
 \tadGeneradores
 \tadOperacion{iniciar}{conj(jugador)/jugadores,conj(casillero)/posIniciales,conj(continente)/misiones,tablero/t}{teg}{$tableroValido(t)$ $\yluego$ \#$(jugadores)=$\#$(posIniciales)$ $\land$ \#$(posIniciales)=$\#$(misiones)$ $\land$ $misiones \subseteq continentes(t)$ $\land$ $posIniciales \subseteq casilleros(t)$}
-\tadOperacion{mover}{teg/t, jugador/j, movimiento/m, nat/k}{teg}{$j \in jugadores(t)$}
-\tadOperacion{agFicha}{teg/t, jugador/j, casillero/c}{teg}{$j \in jugadores(t)$ $\land$ $c \in casilleros(tablero(t))$}
+\tadOperacion{mover}{teg/t, jugador/j, movimiento/m, nat/k}{teg}{$\neg finalizado(t) \land j \in jugadores(t) \yluego \neg eliminado(t,j)$}
+\tadOperacion{agFicha}{teg/t, jugador/j, casillero/c}{teg}{$c \in casilleros(tablero(t)) \land \neg finalizado(t) \land j \in jugadores(t) \yluego \neg eliminado(t,j)$}
 \tadOtrasOperaciones
 
 
