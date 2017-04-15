@@ -60,7 +60,26 @@
 \tadGeneros{teg}
 \tadExporta{despues vemos}
 
-\tadIgualdadObservacionalSimple{ya veremos}
+\tadIgualdadObservacionalSimple{(\paratodo{teg}{t,t1}) $t \igobs t1$ $\iff$ 
+					     \\$tablero(t) \igobs tablero(t1) \yluego$
+					     \\
+					     \\ $jugadores(t) \igobs jugadores(t1) \yluego$
+					     \\
+					     \\((\paratodo{jugador}{j})(\paratodo{casillero}{c})
+					     $j$$\in$$jugadores(t)$ $\land$ $c$$\in$$casilleros(tablero(t))$$\impluego$
+					     \\ $\#fichasJEnC(t,j,c) \igobs 
+					     \#fichasJEnC(t1,j,c)$)  $\yluego$
+					     \\
+					     \\((\paratodo{jugador}{j})
+					     $j$$\in$$jugadores(t)$ $\impluego$
+					     \\ $mision(t,j) \igobs \#mision(t1,j)$)  $\yluego$
+					     \\
+					     \\ $finalizado(t) \igobs finalizado(t1) \yluego$
+					     \\ 
+					     					     \\((\paratodo{jugador}{j})
+					     $j$$\in$$jugadores(t)$ $\impluego$
+					     \\ $\#fichasTotales(t,j) \igobs \#fichasTotales(t1,j)$)
+			        }
 \tadObservadores
 
 \tadOperacion{jugadores}{teg}{conj(jugador)}{}
