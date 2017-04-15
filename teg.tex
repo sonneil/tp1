@@ -58,7 +58,7 @@
 
 \begin{tad}{\tadNombre{Teg}}
 \tadGeneros{teg}
-\tadExporta{despues vemos}
+\tadExporta{Observadores, Generadores, jugadoresVivos, eliminados, ganador, faltaDominar, casillerosDisputados, casillerosConquistados, casillerosVacios, disputan}
 
 \tadIgualdadObservacionalSimple{(\paratodo{teg}{t,t1}) $t \igobs t1$ $\iff$ 
 					     \\$tablero(t) \igobs tablero(t1) \yluego$
@@ -95,18 +95,21 @@
 \tadOperacion{agFicha}{teg/t, jugador/j, casillero/c}{teg}{$c \in casilleros(tablero(t)) \land \neg finalizado(t) \land j \in jugadores(t) \yluego \neg eliminado(t,j)$}
 \tadOtrasOperaciones
 
-
-\tadOperacion{faltaDominar}{teg/t,jugador/j}{nat}{$j \in jugadores(t)$}
-\tadOperacion{eliminado}{teg/t,jugador/j}{bool}{$j \in jugadores(t)$}
-\tadOperacion{estadoCasillero}{teg/t,casillero/c}{EstadoCasillero}{$c \in casilleros(tablero(t))$}
+\tadOperacion{jugadoresVivos}{teg/t}{conj(jugador)}{}
 \tadOperacion{eliminados}{teg/t}{teg}{}
 \tadOperacion{ganador}{teg/t}{teg}{$finalizado(t)$}
-\tadOperacion{faltanDominar}{teg}{conj(casillero)}{}
+\tadOperacion{faltaDominar}{teg/t,jugador/j}{nat}{$j \in jugadores(t)$}
 \tadOperacion{casillerosDisputados}{teg}{conj(casillero)}{}
 \tadOperacion{casillerosDominados}{teg}{conj(casillero)}{}
 \tadOperacion{casillerosVacios}{teg}{conj(casillero)}{}
-\tadOperacion{disputan}{teg/t,casillero/c}{conj(jugador)}{$disputado(t,c)$}
-%%%%%%%%%%%% OPERACIONES AUXILIARES AGREGAR UN COMENTARIO
+\tadOperacion{disputan}{teg/t,casillero/c}{conj(jugador)}{$c \in casilleros(tablero(t)) \yluego disputado(t,c)$}
+
+
+
+%%%%%%%%%%%% AGREGAR COMENTARIO DE QUE SON OPERACIONES AUXILIARES %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tadOperacion{eliminado}{teg/t,jugador/j}{bool}{$j \in jugadores(t)$}
+\tadOperacion{estadoCasillero}{teg/t,casillero/c}{EstadoCasillero}{$c \in casilleros(tablero(t))$}
+\tadOperacion{faltanDominar}{teg}{conj(casillero)}{}
 \tadOperacion{jugadoresEnC}{teg/t,casillero/c}{conj(jugador)}{$j \in jugadores(t)$}
 \tadOperacion{\#jugadoresEnC}{teg/t,casillero/c}{nat}{$j \in jugadores(t)$}
 \tadOperacion{chequearEliminado}{teg/t,jugador/j,conj(casillero)/cs}{nat}{$j \in jugadores(t)$}
@@ -130,7 +133,6 @@
 
 \tadOperacion{unicoJugadorVivo?}{teg/t}{bool}{}
 \tadOperacion{unicoJugadorVivo}{teg/t}{jugador}{unicoJugadorVivo?(t)}
-\tadOperacion{jugadoresVivos}{teg/t,conj(jugador)/jugadores}{conj(jugador)}{}
 \tadOperacion{sumaFichasToC}{teg/t,jugador/j,movimiento/m,casillero/c,nat/k,conj(casillero)}{nat}{$j \in jugadores(t) \land c \in casilleros(tablero(t))$}
 \tadOperacion{obtenerFaltaDominar}{teg/t,jugador/j,}{nat}{$j \in jugadores(t)$}
 
@@ -163,7 +165,7 @@ FI}
 \tadAxioma{finalizado(iniciar(t,jugadores,posIniciales,misiones))}{chequearFinalizado(t,jugadores,posIniciales,misiones)}
 \tadAxioma{finalizado(mover(t,j,m))}{chequearFinalizado(mover(t,j,m)}
 \tadAxioma{finalizado(agFicha(t,j,c))}{chequearFinalizado(agFicha(t,j,c)}
-\tadAxioma{\#fichasTotales(iniciar(t,jugadores,posIniciales,misiones))}{0}
+\tadAxioma{\#fichasTotales(iniciar(t,jugadores,posIniciales,misiones))}{1}
 \tadAxioma{\#fichasTotales(mover(t,j,m),j1)}{\#fichasTotales(t,j1)}
 \tadAxioma{\#fichasTotales(agFicha(t,j,c),j1)}{\#fichasTotales(t,j1) + $\beta(j=j1)$}
 \tadAxioma{eliminado(t,j)}{chequearEliminado(t,j,casilleros(tablero(t)))}
@@ -177,7 +179,6 @@ FI}
 \tadAxioma{casillerosVacios(t)}{$obtenerCasillerosVacios(t,casilleros(tablero(t)))$}
 \tadAxioma{disputan(t,c)}{$jugadoresEnC(t,c)$}
 
-%%%% AXIOMAS OP AUXILIARES
 \tadAxioma{chequearEliminado(t,j,cas)}{\IF $\emptyset ?(cas)$ THEN true ELSE {\IF $\#fichasJEnC(t,j,dameUno(cas))=0$ THEN chequearEliminado(t,j,sinUno(cas)) ELSE false FI} FI}
 \tadAxioma{obtenerEliminados(t,jugadores)}{\IF $\emptyset ?(jugadores)$ THEN {$\emptyset$} ELSE {\IF $eliminado(t,dameUno(jugadores))$ THEN $Ag(dameUno(jugadores),obtenerEliminados(t,sinUno(jugadores)))$ ELSE $obtenerEliminados(t,sinUno(jugadores))$ FI} FI}
 \tadAxioma{dominadosPorJ(t,j,cs)}{\IF $\emptyset ?(cs)$ THEN $\emptyset$ ELSE {\IF $estadoCasillero(t,j,dameUno(cs))=DOMINADO$ THEN $Ag(dameUno(cs),dominadosPorJ(t,j,sinUno(cs)))$ ELSE $dominadosPorJ(t,j,sinUno(cs))$ FI} FI}
@@ -203,9 +204,9 @@ FI}
 \tadAxioma{jugadoElegido(t,c)}{$dameUno(jugadoresEnC(t,c))$}
 \tadAxioma{$\beta$(b)}{\IF $b$ THEN 1 ELSE 0 FI}
 
-\tadAxioma{unicoJugadorVivo?(t)}{\#(jugadoresVivos(t,jugadores(t)))=1}
-\tadAxioma{unicoJugadorVivo(t)}{dameUno(jugadoresVivos(t,jugadores(t)))}
-\tadAxioma{jugadoresVivos(t,jugs)}{jugadores(t) - eliminados(t)}
+\tadAxioma{unicoJugadorVivo?(t)}{\#(jugadoresVivos(t))=1}
+\tadAxioma{unicoJugadorVivo(t)}{dameUno(jugadoresVivos(t))}
+\tadAxioma{jugadoresVivos(t)}{jugadores(t) - eliminados(t)}
 
 \tadAxioma{sumaFichasToC(t,j,m,c,k,destinosC)}{\IF $\emptyset ?(destinosC)$ THEN 0 ELSE {\IF $\#fichasJEnC(t,j,dameUno(destinosC))<k $ THEN \#fichasJEnC(t,j,dameUno(destinosC))+\\sumaFichasToC(t,j,m,c,k,sinUno(destinosC)) ELSE k+sumaFichasToC(t,j,m,c,k,sinUno(destinosC)) FI} FI}
 
